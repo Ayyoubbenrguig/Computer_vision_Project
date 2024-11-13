@@ -1,0 +1,102 @@
+mermaid online editor : https://mermaid.live
+
+U-Net :
+
+flowchart TB
+    subgraph E1[encoding block]
+        direction LR
+        be11[3] -->|conv2d|be12[16]
+        be12[16] -->|ReLU|be13[16]
+        be13[16] -->|conv2d|be14[16]
+    end
+    subgraph E2[encoding block]
+        direction LR
+        be21[16] -->|conv2d|be22[32]
+        be22[32] -->|ReLU|be23[32]
+        be23[32] -->|conv2d|be24[32]
+    end
+    subgraph E3[encoding block]
+        direction LR
+        be31[32] -->|conv2d|be32[64]
+        be32[64] -->|ReLU|be33[64]
+        be33[64] -->|conv2d|be34[64]
+    end
+    subgraph D1[decoding block]
+        direction LR
+        d11[64] -->|conv2d|d12[32]
+        d12[32] -->|ReLU|d13[32]
+        d13[32] -->|conv2d|d14[32]
+    end
+    subgraph D2[decoding block]
+        direction LR
+        d21[32] -->|conv2d|d22[16]
+        d22[16] -->|ReLU|d23[16]
+        d23[16] -->|conv2d|d24[16]
+    end
+    subgraph D3[decoding block]
+        direction LR
+        d31[16] -->|conv2d|d32[8]
+        d32[8] -->|ReLU|d33[8]
+        d33[8] -->|conv2d|d34[8]
+    end
+    rgb[RGB input image]-->E1
+    E1-->|pool|E2
+    E2-->|pool|E3
+    E1-->|stored output|D3
+    E2-->|stored output|D2
+    E3-->|stored output|D1
+    E3-->|pool|ls[latent space 128]
+    ls-->|upconv|D1
+    D1-->|upconv|D2
+    D2-->|upconv|D3
+    D3-->|conv2d 8->1|head[decoder features 2 segmentation mask]
+    
+Hour-Glass :
+
+flowchart TB
+    subgraph E1[encoding block]
+        direction LR
+        be11[3] -->|conv2d|be12[16]
+        be12[16] -->|ReLU|be13[16]
+        be13[16] -->|conv2d|be14[16]
+    end
+    subgraph E2[encoding block]
+        direction LR
+        be21[16] -->|conv2d|be22[32]
+        be22[32] -->|ReLU|be23[32]
+        be23[32] -->|conv2d|be24[32]
+    end
+    subgraph E3[encoding block]
+        direction LR
+        be31[32] -->|conv2d|be32[64]
+        be32[64] -->|ReLU|be33[64]
+        be33[64] -->|conv2d|be34[64]
+    end
+    subgraph D1[decoding block]
+        direction LR
+        d11[64] -->|conv2d|d12[32]
+        d12[32] -->|ReLU|d13[32]
+        d13[32] -->|conv2d|d14[32]
+    end
+    subgraph D2[decoding block]
+        direction LR
+        d21[32] -->|conv2d|d22[16]
+        d22[16] -->|ReLU|d23[16]
+        d23[16] -->|conv2d|d24[16]
+    end
+    subgraph D3[decoding block]
+        direction LR
+        d31[16] -->|conv2d|d32[8]
+        d32[8] -->|ReLU|d33[8]
+        d33[8] -->|conv2d|d34[8]
+    end
+    rgb[RGB input image]-->E1
+    E1-->|pool|E2
+    E2-->|pool|E3
+    E1~~~D3
+    E2~~~D2
+    E3-->|pool|Elat[latent space 128]
+    Elat-->|upconv|D1
+    D1-->|upconv|D2
+    D2-->|upconv|D3
+    D3-->|conv2d|head[decoder features 2 segmentation mask]
